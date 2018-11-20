@@ -38,6 +38,12 @@ class User(Resource):
 		user = Users.query.filter_by(id=idUser).first()
 		return user
 
+	@marshal_with(user_fields, envelope='user')
+	def get(self, username, password):
+		print(username)
+		user = Users.query.filter_by(username=username, password=password).first()
+		return user
+
 	def delete(self, idUser):
 		user = Users.query.filter_by(id=idUser).first()
 		db.session.delete(user)
@@ -72,8 +78,9 @@ class UsersList(Resource):
 		return new_user, 201
 
 api.add_resource(UsersList, '/users')
-api.add_resource(User, '/users/<idUser>')
+api.add_resource(User, '/users/<idUser>', '/users/<username>/<password>')
 
 if __name__ == '__main__':
     db.create_all()
     app.run(debug=True)
+    
